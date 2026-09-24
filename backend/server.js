@@ -1,8 +1,9 @@
 require("dotenv").config();
 
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
+const connectDB = require("./config/db");
+const authRoutes = require("./routes/auth");
 
 const app = express();
 
@@ -21,13 +22,9 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log("MongoDB Connected");
-  })
-  .catch((err) => console.log(err));
+connectDB();
 
+app.use("/api/auth", authRoutes);
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

@@ -1,6 +1,7 @@
 const User = require("../models/User");
+const jwt = require("jsonwebtoken");
 
-const register = async (req, res) => {
+exports.register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
@@ -27,10 +28,46 @@ const register = async (req, res) => {
       },
     });
   } catch (err) {
+    console.log("REGISTER ERROR:", err);
     res.status(500).json({
       message: "Server error,Please try again ",
     });
   }
 };
 
-module.exports = { register };
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: "Please fill all fields" });
+    }
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email and password" });
+    }
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid email and password" });
+    }
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: process.env.JWT_EXPIRES_IN },
+    );
+    return res.status(200).json({
+      message: "Login successfull",
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        heartBalance: user.heartBalance,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error,Please try again ",
+    });
+  }
+};
