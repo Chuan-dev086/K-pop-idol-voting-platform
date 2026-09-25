@@ -71,3 +71,26 @@ exports.login = async (req, res) => {
     });
   }
 };
+
+exports.getMe = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json({
+      message: "Fetch User profile successfully",
+      user: {
+        id: req.user._id,
+        username: req.user.username,
+        email: req.user.email,
+        role: req.user.role,
+        heartBalance: req.user.heartBalance,
+      },
+    });
+  } catch (err) {
+    console.log("GETME ERROR :", err);
+    res.status(500).json({
+      message: "Server error,Please try again",
+    });
+  }
+};
