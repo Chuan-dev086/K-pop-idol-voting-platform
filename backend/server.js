@@ -5,6 +5,7 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/auth");
 const agencyRoutes = require("./routes/agency");
+const idolRoutes = require("./routes/idol");
 
 const app = express();
 
@@ -27,6 +28,7 @@ connectDB();
 
 app.use("/api/auth", authRoutes);
 app.use("/api/agencies", agencyRoutes);
+app.use("/api/idols", idolRoutes);
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
