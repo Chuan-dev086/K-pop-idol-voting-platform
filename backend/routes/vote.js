@@ -1,0 +1,9 @@
+const express = require("express");
+const router = express.Router();
+const voteController = require("../controllers/voteController");
+const authenticate = require("../middleware/auth");
+const notAdmin = require("../middleware/notAdmin");
+
+router.post("/check-in", authenticate, notAdmin, voteController.checkIn);
+
+module.exports = router;
