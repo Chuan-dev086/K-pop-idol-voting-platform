@@ -5,5 +5,7 @@ const authenticate = require("../middleware/auth");
 const notAdmin = require("../middleware/notAdmin");
 
 router.post("/check-in", authenticate, notAdmin, voteController.checkIn);
+router.post("/cast", authenticate, notAdmin, voteController.castVote);
+router.get("/history", authenticate, voteController.getHistory);
 
 module.exports = router;
