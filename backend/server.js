@@ -8,6 +8,7 @@ const agencyRoutes = require("./routes/agency");
 const idolRoutes = require("./routes/idol");
 const pollRoutes = require("./routes/poll");
 const voteRoutes = require("./routes/vote");
+const userRoutes = require("./routes/user");
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use("/api/agencies", agencyRoutes);
 app.use("/api/idols", idolRoutes);
 app.use("/api/polls", pollRoutes);
 app.use("/api/votes", voteRoutes);
+app.use("/api/users", userRoutes);
 
 const PORT = process.env.PORT || 3000;
 
