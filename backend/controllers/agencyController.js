@@ -3,6 +3,8 @@ const Idol = require("../models/Idol");
 
 exports.getAllAgencies = async (req, res) => {
   try {
+    // get all agencies and sort it with ascending order
+    // and return the count of agencies and whole agencies
     const agencies = await Agency.find().sort({ name: 1 });
 
     return res.status(200).json({ count: agencies.length, agencies });
@@ -16,12 +18,14 @@ exports.getAgencyById = async (req, res) => {
   try {
     const { id } = req.params;
 
+    // find the agency according the ID
     const agency = await Agency.findById(id);
 
     if (!agency) {
       return res.status(404).json({ message: "Agency not found" });
     }
 
+    // and return the agency with message
     return res.status(200).json({ agency });
   } catch (error) {
     console.log("GET AGENCY BY ID ERROR:", error);
@@ -31,21 +35,26 @@ exports.getAgencyById = async (req, res) => {
 
 exports.createAgency = async (req, res) => {
   try {
+    // destructure the field and store it in req.body
     const { name, country, foundedYear } = req.body;
+    // check the name existing because name is required
     if (!name) {
       return res.status(400).json({ message: "Agency name is required" });
     }
 
+    // find the agency if to find the same name agency
     const existingName = await Agency.findOne({ name });
     if (existingName) {
       return res.status(400).json({ message: "Agency already exists" });
     }
+    // create the agency in database
     const agency = await Agency.create({
       name,
       country,
       foundedYear,
     });
 
+    // return the new create agency
     return res.status(201).json({
       message: "Agency created successfully",
       agency,
@@ -67,6 +76,9 @@ exports.updateAgency = async (req, res) => {
       return res.status(404).json({ message: "Agency not found" });
     }
 
+    // check the name to find the name which exist
+    // find the agency with the name except itself
+    // if name exist return the error message else renew the agency.name
     if (name && name !== agency.name) {
       const nameExists = await Agency.findOne({
         name: name,
@@ -77,11 +89,16 @@ exports.updateAgency = async (req, res) => {
       }
       agency.name = name;
     }
+
+    // if country sent renew it
+    // if foundedYear sent then renew it
     if (country) agency.country = country;
     if (foundedYear) agency.foundedYear = foundedYear;
 
+    // save it to the database
     await agency.save();
 
+    // return the success message and whole agency list
     return res.status(200).json({
       message: "Agency updated successfully",
       agency,
@@ -107,6 +124,7 @@ exports.deleteAgency = async (req, res) => {
       return res.status(404).json({ message: "Agency not found " });
     }
 
+    // use agency ID to find the idol
     const hasIdols = await Idol.findOne({ agencyId: id });
 
     if (hasIdols) {
@@ -116,6 +134,7 @@ exports.deleteAgency = async (req, res) => {
       });
     }
 
+    // delete the agency from database 
     await agency.deleteOne();
 
     return res.status(200).json({
