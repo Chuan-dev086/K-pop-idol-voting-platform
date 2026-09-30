@@ -29,8 +29,13 @@ export const AuthProvider = ({ children }) => {
     return user;
   };
 
+  const register = async (username, email, password) => {
+    const res = await api.post("/auth/register", { username, email, password });
+    return res.data;
+  };
+
   //   pack the object and set to provider
-  const value = { user, login, logout, setUser };
+  const value = { user, login, logout, setUser, register };
 
   //   return the value and render out the children
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

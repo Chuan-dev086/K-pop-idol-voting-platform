@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  TextField,
-  Button,
-} from "@mui/material";
+import { TextField, Button, Typography } from "@mui/material";
+import AuthLayout from "../components/AuthLayout";
 import { useSnackbar } from "notistack";
 import { useAuth } from "../context/AuthContext";
 
@@ -37,69 +31,61 @@ const Login = () => {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "80vh",
-        p: 2,
-      }}
-    >
-      <Card sx={{ width: "100%", maxWidth: 420 }}>
-        <CardContent sx={{ p: 4 }}>
-          <Typography
-            variant="h4"
-            sx={{ textAlign: "center", mb: 3, fontWeight: "bold" }}
-          >
-            Login
-          </Typography>
+    <AuthLayout title="Login">
+      <form onSubmit={handleSubmit}>
+        <TextField
+          label="Email"
+          type="email"
+          fullWidth
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          sx={{ mb: 2 }}
+        />
 
-          <form onSubmit={handleSubmit}>
-            <TextField
-              label="Email"
-              type="email"
-              fullWidth
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              sx={{ mb: 2 }}
-            />
+        <TextField
+          label="Password"
+          type="password"
+          fullWidth
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          sx={{ mb: 3 }}
+        />
 
-            <TextField
-              label="Password"
-              type="password"
-              fullWidth
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              sx={{ mb: 3 }}
-            />
+        <Button
+          type="submit"
+          variant="contained"
+          color="secondary"
+          fullWidth
+          disabled={loading}
+          size="large"
+          sx={{
+            borderRadius: "16px",
+            boxShadow: `
+      0 6px 0 #c42069,
+      inset 0 2px 4px rgba(255, 255, 255, 0.4)
+    `,
+            "&:hover": {
+              boxShadow: `
+        0 4px 0 #c42069,
+        inset 0 2px 4px rgba(255, 255, 255, 0.4)
+      `,
+              transform: "translateY(2px)",
+            },
+          }}
+        >
+          {loading ? "Logging in..." : "Login"}
+        </Button>
+      </form>
 
-            <Button
-              type="submit"
-              variant="contained"
-              color="secondary"
-              fullWidth
-              disabled={loading}
-              size="large"
-            >
-              {loading ? "Logging in..." : "Login"}
-            </Button>
-          </form>
-
-          <Typography sx={{ textAlign: "center", mt: 3 }} variant="body2">
-            Don't have an account?{" "}
-            <Link
-              to="/register"
-              style={{ color: "#c06db2", fontWeight: "bold" }}
-            >
-              Register
-            </Link>
-          </Typography>
-        </CardContent>
-      </Card>
-    </Box>
+      <Typography sx={{ textAlign: "center", mt: 3 }} variant="body2">
+        Don't have an account?{" "}
+        <Link to="/register" style={{ color: "#c06db2", fontWeight: "bold" }}>
+          Register
+        </Link>
+      </Typography>
+    </AuthLayout>
   );
 };
 
