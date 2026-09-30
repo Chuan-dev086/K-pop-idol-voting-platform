@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import api from "../services/api";
 
 // create a context object
 const AuthContext = createContext();
@@ -17,8 +18,19 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const login = async (email, password) => {
+    const res = await api.post("/auth/login", { email, password });
+    const { token, user } = res.data;
+
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+    setUser(user);
+
+    return user;
+  };
+
   //   pack the object and set to provider
-  const value = { user, logout, setUser };
+  const value = { user, login, logout, setUser };
 
   //   return the value and render out the children
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

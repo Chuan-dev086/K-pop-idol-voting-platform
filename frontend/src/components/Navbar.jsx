@@ -63,7 +63,7 @@ const Navbar = () => {
             <>
               {user.role === "admin" && (
                 <Button color="inherit" component={Link} to="/admin">
-                  Admin
+                  Admin Panel
                 </Button>
               )}
               <Button color="inherit" component={Link} to="/profile">
@@ -115,7 +115,7 @@ const Navbar = () => {
                 <>
                   {user.role === "admin" && (
                     <ListItemButton component={Link} to="/admin">
-                      <ListItemText primary="Admin" />
+                      <ListItemText primary="Admin Panel" />
                     </ListItemButton>
                   )}
                   <ListItemButton component={Link} to="/profile">
