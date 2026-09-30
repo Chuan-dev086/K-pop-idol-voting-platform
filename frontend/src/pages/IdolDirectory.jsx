@@ -11,11 +11,13 @@ import { useSnackbar } from "notistack";
 import api from "../services/api";
 import IdolCard from "../components/IdolCard";
 
-const idolDirectory = () => {
+const IdolDirectory = () => {
   const [idols, setIdols] = useState([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState("");
   const [search, setSearch] = useState("");
+
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     const fetchIdols = async () => {
@@ -27,7 +29,7 @@ const idolDirectory = () => {
 
         const res = await api.get("/idols", { params });
         setIdols(res.data.idols);
-      } catch (error) {
+      } catch {
         enqueueSnackbar("Failed to load idols", { variant: "error" });
       } finally {
         setLoading(false);
@@ -35,14 +37,14 @@ const idolDirectory = () => {
     };
 
     fetchIdols();
-  }, [category, search]);
+  }, [category, search, enqueueSnackbar]);
+
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" sx={{ fontWeight: "bold", mb: 3 }}>
         Idols
       </Typography>
 
-      {/* 筛选栏 */}
       <Box sx={{ display: "flex", gap: 2, mb: 4, flexWrap: "wrap" }}>
         <TextField
           label="Search by name"
@@ -64,7 +66,6 @@ const idolDirectory = () => {
         </TextField>
       </Box>
 
-      {/* 内容 */}
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
           <CircularProgress />
@@ -88,4 +89,4 @@ const idolDirectory = () => {
   );
 };
 
-export default idolDirectory;
+export default IdolDirectory;
