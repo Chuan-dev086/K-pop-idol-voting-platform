@@ -42,9 +42,9 @@ const theme = createTheme({
         body: {
           minHeight: "100vh",
           background:
-            "linear-gradient(135deg, #fbc4da 0%, #c084fc 50%, #fbc4da 100%)",
+            "linear-gradient(135deg, #ffaccd 0%, #fff0f6 35%, #ddcff7 65%, #ffd0e6 100%)",
           backgroundSize: "200% 200%",
-          animation: `${gradientShift} 25s ease infinite`,
+          animation: `${gradientShift} 15s ease infinite`,
           backgroundAttachment: "fixed",
         },
         "#root": { minHeight: "100vh" },
@@ -57,7 +57,8 @@ const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          background: "rgba(255, 240, 251, 0.85)",
+          background:
+            "linear-gradient(135deg, rgba(255, 154, 200, 0.9) 0%, rgba(200, 170, 255, 0.85) 100%)",
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",
           color: "#3b1f3f",
