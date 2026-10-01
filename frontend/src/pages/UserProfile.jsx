@@ -12,14 +12,15 @@ import {
 import { useSnackbar } from "notistack";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import dayjs from "dayjs";
 
 const UserProfile = () => {
   const { user, setUser } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
-
   const [checkingIn, setCheckingIn] = useState(false);
   const [now, setNow] = useState(() => Date.now());
+  const [history, setHistory] = useState({ votes: [], heartLogs: [] });
 
   useEffect(() => {
     if (!user) navigate("/login");
@@ -32,6 +33,22 @@ const UserProfile = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchHistory = async () => {
+      try {
+        const res = await api.get("/votes/history");
+        setHistory({
+          votes: res.data.votes,
+          heartLogs: res.data.heartLogs,
+        });
+      } catch {
+        // ignore catch error
+      }
+    };
+    fetchHistory();
+  }, [user]);
 
   const handleCheckIn = async () => {
     setCheckingIn(true);
@@ -48,6 +65,12 @@ const UserProfile = () => {
 
       enqueueSnackbar("Check-in successful! +50 hearts", {
         variant: "success",
+      });
+
+      const historyRes = await api.get("/votes/history");
+      setHistory({
+        votes: historyRes.data.votes,
+        heartLogs: historyRes.data.heartLogs,
       });
     } catch (error) {
       let msg = error.response?.data?.message || "Check-in failed";
@@ -93,12 +116,8 @@ const UserProfile = () => {
         My Profile
       </Typography>
 
-      <Card
-        sx={{
-          borderRadius: 4,
-          boxShadow: "0 4px 20px rgba(192, 109, 178, 0.15)",
-        }}
-      >
+      {/* Account Info Card */}
+      <Card>
         <CardContent sx={{ p: 3 }}>
           <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
             Account Info
@@ -172,6 +191,108 @@ const UserProfile = () => {
               {checkingIn ? <CircularProgress size={20} /> : "Check In"}
             </Button>
           </Box>
+        </CardContent>
+      </Card>
+
+      {/* Voting History Card */}
+      <Card sx={{ mt: 3 }}>
+        <CardContent sx={{ p: 3 }}>
+          <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
+            Voting History
+          </Typography>
+
+          {history.votes.length === 0 ? (
+            <Typography color="text.secondary">No votes yet</Typography>
+          ) : (
+            history.votes.map((vote, index) => (
+              <Box
+                key={vote._id}
+                sx={{
+                  py: 1.5,
+                  borderBottom:
+                    index < history.votes.length - 1
+                      ? "1px solid rgba(192, 109, 178, 0.1)"
+                      : "none",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mb: 0.5,
+                  }}
+                >
+                  <Typography sx={{ fontWeight: 600 }}>
+                    {vote.idolId?.name || "Unknown Idol"} in{" "}
+                    {vote.pollId?.title || "Unknown Poll"}
+                  </Typography>
+                  <Typography
+                    sx={{ fontWeight: "bold", color: "secondary.main" }}
+                  >
+                    {vote.votesSpent} votes
+                  </Typography>
+                </Box>
+
+                {vote.message && (
+                  <Typography variant="body2" color="text.secondary">
+                    "{vote.message}"
+                  </Typography>
+                )}
+
+                <Typography variant="caption" color="text.secondary">
+                  {dayjs(vote.createdAt).format("MMM D, YYYY HH:mm")}
+                </Typography>
+              </Box>
+            ))
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Heart History Card */}
+      <Card sx={{ mt: 3 }}>
+        <CardContent sx={{ p: 3 }}>
+          <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
+            Heart History
+          </Typography>
+
+          {history.heartLogs.length === 0 ? (
+            <Typography color="text.secondary">No heart changes yet</Typography>
+          ) : (
+            history.heartLogs.map((log, index) => (
+              <Box
+                key={log._id}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  py: 1.5,
+                  borderBottom:
+                    index < history.heartLogs.length - 1
+                      ? "1px solid rgba(192, 109, 178, 0.1)"
+                      : "none",
+                }}
+              >
+                <Box>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    {log.type}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {dayjs(log.createdAt).format("MMM D, YYYY HH:mm")}
+                  </Typography>
+                </Box>
+
+                <Typography
+                  sx={{
+                    fontWeight: "bold",
+                    color: log.amount > 0 ? "success.main" : "error.main",
+                  }}
+                >
+                  {log.amount > 0 ? "+" : ""}
+                  {log.amount}
+                </Typography>
+              </Box>
+            ))
+          )}
         </CardContent>
       </Card>
     </Box>
