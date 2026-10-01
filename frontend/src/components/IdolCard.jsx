@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 
 const IdolCard = ({ idol }) => {
+  // if don't have idol will return null
   if (!idol) return null;
 
   return (
@@ -44,13 +45,16 @@ const IdolCard = ({ idol }) => {
             fontWeight: "bold",
           }}
         >
+          {/* if don't have picture the avatar will take the first letter and turn to capital letter to display  */}
           {idol.name?.charAt(0).toUpperCase()}
         </Avatar>
 
+        {/* idol name  */}
         <Typography variant="h6" sx={{ fontWeight: "bold", mb: 0.5 }}>
           {idol.name}
         </Typography>
 
+        {/* idol agency name  */}
         <Typography
           variant="body2"
           color="text.secondary"
@@ -69,6 +73,7 @@ const IdolCard = ({ idol }) => {
             justifyContent: "space-between",
           }}
         >
+          {/* the category badge  */}
           <Chip
             label={idol.category}
             size="small"
@@ -80,6 +85,7 @@ const IdolCard = ({ idol }) => {
             variant="body2"
             sx={{ fontWeight: 600, color: "primary.main" }}
           >
+            {/* put the thousand seperator for votes  eg=> 123456  become 123,456 */}
             {idol.totalVotes?.toLocaleString()} votes
           </Typography>
         </Box>

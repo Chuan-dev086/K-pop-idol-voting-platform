@@ -3,8 +3,10 @@ import { Box, Typography, Tabs, Tab } from "@mui/material";
 import IdolsTab from "../components/admin/IdolsTab";
 
 const AdminDashboard = () => {
+  // set state for idol tabs
   const [tab, setTab] = useState("idols");
 
+  // the function of clicking tabs
   const handleChange = (e, newValue) => {
     setTab(newValue);
   };

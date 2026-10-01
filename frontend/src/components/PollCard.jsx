@@ -9,6 +9,7 @@ import {
 import { Link } from "react-router";
 import dayjs from "dayjs";
 
+// the color of status badge
 const statusStyles = {
   active: { bgcolor: "#3dcb8e", color: "#ffffff" },
   upcoming: { bgcolor: "#c06db2", color: "#ffffff" },
@@ -16,6 +17,7 @@ const statusStyles = {
 };
 
 const PollCard = ({ poll }) => {
+  // if don't have poll it will return null
   if (!poll) return null;
 
   return (
@@ -42,6 +44,8 @@ const PollCard = ({ poll }) => {
           p: 3,
         }}
       >
+        {/* the poll status  */}
+        {/* text transform : capitalize is make the first letter become capital letter  */}
         <Chip
           label={poll.status}
           size="small"
@@ -53,10 +57,12 @@ const PollCard = ({ poll }) => {
           }}
         />
 
+        {/* the poll title  */}
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
           {poll.title}
         </Typography>
 
+        {/* the poll description  */}
         <Typography
           variant="body2"
           color="text.secondary"
@@ -70,6 +76,7 @@ const PollCard = ({ poll }) => {
           {poll.description}
         </Typography>
 
+        {/* the start and end date of poll  */}
         <Typography variant="caption" color="text.secondary">
           {dayjs(poll.startDate).format("MMM D")} -{" "}
           {dayjs(poll.endDate).format("MMM D")}
@@ -83,6 +90,7 @@ const PollCard = ({ poll }) => {
             justifyContent: "flex-end",
           }}
         >
+          {/* view poll button  */}
           <Button
             variant="contained"
             color="secondary"

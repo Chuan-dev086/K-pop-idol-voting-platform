@@ -1,7 +1,8 @@
+// the styling for only login page and register page
 import { Box, Card, CardContent, Typography } from "@mui/material";
 
 const cardVariants = {
-  // Login：粉色 neumorphism
+  // styling for login page
   default: {
     backgroundColor: "#fde8f0",
     boxShadow: `
@@ -10,9 +11,10 @@ const cardVariants = {
       8px 12px 28px rgba(228, 217, 247, 0.6)
     `,
   },
-  // Register：紫色 neumorphism
+
+  // styling for register page
   register: {
-    backgroundColor: "#efe6fa",
+    backgroundColor: "#ffe3f9",
     boxShadow: `
       inset 4px 4px 8px #ffffff,
       inset -10px -10px 20px #c9b3e0,
@@ -21,6 +23,7 @@ const cardVariants = {
   },
 };
 
+// destructuring the props of authLayout
 const AuthLayout = ({ title, children, variant = "default" }) => {
   const cardStyle = cardVariants[variant] || cardVariants.default;
 

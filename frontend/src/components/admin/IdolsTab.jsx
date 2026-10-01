@@ -25,6 +25,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { useSnackbar } from "notistack";
 import api from "../../services/api";
 
+// initial (empty) values for the idol form, used for adding and resetting
 const emptyForm = {
   name: "",
   category: "",
@@ -43,31 +44,40 @@ const IdolsTab = () => {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  // useCallback keeps fetchData's reference stable;
+  // enqueueSnackbar is a stable function, so fetchData is created only once
   const fetchData = useCallback(async () => {
     try {
+      // request idols and agencies in parallel
       const [idolsRes, agenciesRes] = await Promise.all([
         api.get("/idols"),
         api.get("/agencies"),
       ]);
+      // save the response data into state
       setIdols(idolsRes.data.idols);
       setAgencies(agenciesRes.data.agencies);
     } catch {
       enqueueSnackbar("Failed to load data", { variant: "error" });
     } finally {
+      // stop loading whether the request succeeds or fails
       setLoading(false);
     }
+    // use snackbar to become dependecy array to let it will run one time only cause snackbar never change
   }, [enqueueSnackbar]);
 
+  // fetch data once when the component first mounts
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
+  // open the add form: reset the id and form, then show the modal
   const handleOpenAdd = () => {
     setEditingId(null);
     setForm(emptyForm);
     setOpenModal(true);
   };
 
+  // open the edit form and pre-fill it with the selected idol's data
   const handleOpenEdit = (idol) => {
     setEditingId(idol._id);
     setForm({
@@ -79,12 +89,14 @@ const IdolsTab = () => {
     setOpenModal(true);
   };
 
+  // close the modal and reset the form and editing id
   const handleCloseModal = () => {
     setOpenModal(false);
     setForm(emptyForm);
     setEditingId(null);
   };
 
+  // validate the form, then create or update the idol
   const handleSubmit = async () => {
     if (!form.name || !form.category || !form.agencyId) {
       enqueueSnackbar("Please fill in all required fields", {
@@ -93,6 +105,7 @@ const IdolsTab = () => {
       return;
     }
 
+    // will update when have editing ID and create when don't have ID
     setSubmitting(true);
     try {
       if (editingId) {
@@ -113,6 +126,7 @@ const IdolsTab = () => {
     }
   };
 
+  // ask for confirmation, then delete the idol and refresh the list
   const handleDelete = async (idol) => {
     if (!window.confirm(`Delete "${idol.name}"?`)) return;
 
@@ -126,6 +140,7 @@ const IdolsTab = () => {
     }
   };
 
+  // if the pages still loading it will show circular progress
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
@@ -147,6 +162,7 @@ const IdolsTab = () => {
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
           Idols ({idols.length})
         </Typography>
+        {/* add idols button  */}
         <Button
           variant="contained"
           color="secondary"
@@ -178,10 +194,15 @@ const IdolsTab = () => {
             ) : (
               idols.map((idol) => (
                 <TableRow key={idol._id}>
+                  {/* idol name  */}
                   <TableCell sx={{ fontWeight: 500 }}>{idol.name}</TableCell>
+                  {/* idol category */}
                   <TableCell>{idol.category}</TableCell>
+                  {/* idol agency name  */}
                   <TableCell>{idol.agencyId?.name || "—"}</TableCell>
+                  {/* total vote of idol  */}
                   <TableCell align="right">{idol.totalVotes}</TableCell>
+                  {/* edit button */}
                   <TableCell align="right">
                     <IconButton
                       size="small"
@@ -190,6 +211,7 @@ const IdolsTab = () => {
                     >
                       <EditIcon />
                     </IconButton>
+                    {/* delete button  */}
                     <IconButton
                       size="small"
                       color="error"
@@ -205,6 +227,7 @@ const IdolsTab = () => {
         </Table>
       </TableContainer>
 
+      {/* add and edit idol form  */}
       <Dialog
         open={openModal}
         onClose={handleCloseModal}

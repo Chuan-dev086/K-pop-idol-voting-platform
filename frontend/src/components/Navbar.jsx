@@ -16,16 +16,27 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import { useAuth } from "../context/AuthContext";
 
+// links shown to everyone, shared by the desktop menu and the mobile drawer
+const navLinks = [
+  { label: "Polls", to: "/polls" },
+  { label: "Idols", to: "/idols" },
+];
+
 const Navbar = () => {
+  // global auth state: current user and logout function
   const { user, logout } = useAuth();
+  // returns a function for programmatic navigation
   const navigate = useNavigate();
 
+  // controls the mobile drawer; closed by default
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  // returns a handler that sets the drawer open (true) or closed (false)
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
   };
 
+  // log out, close the drawer, and go back to the home page
   const handleLogout = () => {
     logout();
     setDrawerOpen(false);
@@ -50,17 +61,17 @@ const Navbar = () => {
           Idol Vote Hub
         </Typography>
 
-        {/* ========== 桌面版 ========== */}
+        {/* desktop menu: hidden on small screens */}
         <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}>
-          <Button color="inherit" component={Link} to="/polls">
-            Polls
-          </Button>
-          <Button color="inherit" component={Link} to="/idols">
-            Idols
-          </Button>
+          {navLinks.map((link) => (
+            <Button key={link.to} color="inherit" component={Link} to={link.to}>
+              {link.label}
+            </Button>
+          ))}
 
           {user ? (
             <>
+              {/* only admins see the admin panel */}
               {user.role === "admin" && (
                 <Button color="inherit" component={Link} to="/admin">
                   Admin Panel
@@ -85,27 +96,27 @@ const Navbar = () => {
           )}
         </Box>
 
-        {/* ========== 移动版：汉堡按钮 ========== */}
+        {/* mobile menu button: hidden on large screens */}
         <Box sx={{ display: { xs: "flex", md: "none" } }}>
           <IconButton color="inherit" onClick={toggleDrawer(true)}>
             <MenuIcon />
           </IconButton>
         </Box>
 
-        {/* ========== Drawer ========== */}
+        {/* right-side drawer for the mobile menu */}
         <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
+          {/* clicking anywhere inside closes the drawer (click bubbles up) */}
           <Box
             sx={{ width: 250 }}
             role="presentation"
             onClick={toggleDrawer(false)}
           >
             <List>
-              <ListItemButton component={Link} to="/polls">
-                <ListItemText primary="Polls" />
-              </ListItemButton>
-              <ListItemButton component={Link} to="/idols">
-                <ListItemText primary="Idols" />
-              </ListItemButton>
+              {navLinks.map((link) => (
+                <ListItemButton key={link.to} component={Link} to={link.to}>
+                  <ListItemText primary={link.label} />
+                </ListItemButton>
+              ))}
             </List>
 
             <Divider />
