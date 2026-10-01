@@ -16,17 +16,23 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // request the two data parallel
+        // request polls and active idols data
+        // params:{status :"active "} will change to query string by axios
         const [pollsRes, idolsRes] = await Promise.all([
           api.get("/polls", { params: { status: "active" } }),
           api.get("/idols"),
         ]);
 
+        // if get data will get first 3 only with method .slice(0,3)
         setPolls(pollsRes.data.polls.slice(0, 3));
 
+        // copy the idols array with spread operator and sorting from highest to lowest and take the top 5 with .slice method
         const sorted = [...idolsRes.data.idols]
           .sort((a, b) => b.totalVotes - a.totalVotes)
           .slice(0, 5);
 
+        // render the idols after sorted
         setTopIdols(sorted);
       } catch {
         enqueueSnackbar("Failed to load data", { variant: "error" });
@@ -38,6 +44,7 @@ const Home = () => {
     fetchData();
   }, [enqueueSnackbar]);
 
+  // if loading will display the circular progress
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
@@ -48,7 +55,7 @@ const Home = () => {
 
   return (
     <Box sx={{ p: 3, maxWidth: 1200, mx: "auto" }}>
-      {/* Hero 区域 */}
+      {/* Hero section */}
       <Box sx={{ textAlign: "center", mb: 6 }}>
         <Typography variant="h3" sx={{ fontWeight: "bold", mb: 1 }}>
           Idol Vote Hub
@@ -58,7 +65,7 @@ const Home = () => {
         </Typography>
       </Box>
 
-      {/* Active Polls 区域 */}
+      {/* Active Polls section */}
       <Box sx={{ mb: 6 }}>
         <Box
           sx={{
@@ -91,7 +98,7 @@ const Home = () => {
         )}
       </Box>
 
-      {/* Top Idols 区域 */}
+      {/* Top Idols section */}
       <Box>
         <Box
           sx={{
