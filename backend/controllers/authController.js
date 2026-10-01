@@ -33,6 +33,7 @@ exports.register = async (req, res) => {
         email: user.email,
         role: user.role,
         heartBalance: user.heartBalance,
+        lastCheckIn: user.lastCheckIn,
       },
     });
   } catch (err) {
@@ -80,6 +81,7 @@ exports.login = async (req, res) => {
         email: user.email,
         role: user.role,
         heartBalance: user.heartBalance,
+        lastCheckIn: user.lastCheckIn,
       },
     });
   } catch (error) {
@@ -89,7 +91,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// get the current user message 
+// get the current user message
 exports.getMe = async (req, res) => {
   try {
     if (!req.user) {
@@ -103,6 +105,7 @@ exports.getMe = async (req, res) => {
         email: req.user.email,
         role: req.user.role,
         heartBalance: req.user.heartBalance,
+        lastCheckIn: req.user.lastCheckIn,
       },
     });
   } catch (err) {
