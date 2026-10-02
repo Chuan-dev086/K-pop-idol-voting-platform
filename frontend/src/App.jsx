@@ -1,4 +1,6 @@
 import { Routes, Route } from "react-router";
+import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -7,24 +9,42 @@ import PollDetail from "./pages/PollDetail";
 import IdolDirectory from "./pages/IdolDirectory";
 import UserProfile from "./pages/UserProfile";
 import AdminDashboard from "./pages/AdminDashboard";
-import Navbar from "./components/Navbar";
 
-const App = () => {
+function App() {
   return (
     <>
       <Navbar />
       <Routes>
+        {/* open route */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/polls" element={<PollList />} />
         <Route path="/polls/:id" element={<PollDetail />} />
         <Route path="/idols" element={<IdolDirectory />} />
-        <Route path="/profile" element={<UserProfile />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+
+        {/* need login */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* need admin */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute requireAdmin>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );
-};
+}
 
 export default App;
