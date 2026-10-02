@@ -8,6 +8,7 @@ import { Box, Typography, Tabs, Tab } from "@mui/material";
 import IdolsTab from "../components/admin/IdolsTab";
 import AgenciesTab from "../components/admin/AgenciesTab";
 import UsersTab from "../components/admin/UsersTab";
+import PollsTab from "../components/admin/PollsTab";
 
 // Main admin dashboard page component
 const AdminDashboard = () => {
@@ -54,7 +55,7 @@ const AdminDashboard = () => {
       {tab === "agencies" && <AgenciesTab />}
 
       {/* Temporary placeholder for the future Polls management feature */}
-      {tab === "polls" && <Typography>Polls Tab (coming soon)</Typography>}
+      {tab === "polls" && <PollsTab />}
 
       {/* Temporary placeholder for the future Users management feature */}
       {tab === "users" && <UsersTab />}

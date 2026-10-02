@@ -30,8 +30,8 @@ const theme = createTheme({
     // Primary color palette
     // Used by components with color="primary"
     primary: {
-      main: "#c06db2",
-      dark: "#a3559a",
+      main: "#af1696",
+      dark: "#8a0f77", 
       light: "#e3b5da",
       contrastText: "#ffffff",
     },
@@ -212,6 +212,38 @@ const theme = createTheme({
 
           // Add a soft pink shadow for depth
           boxShadow: "0 4px 20px rgba(192, 109, 178, 0.15)",
+        },
+      },
+    },
+
+    // ============================================
+    // NEW: Global Select styles
+    // Ensures the selected value text always uses
+    // the dark purple color, overriding any internal
+    // Webkit text fill color or opacity set by MUI.
+    // ============================================
+    MuiSelect: {
+      styleOverrides: {
+        select: {
+          color: "#3b1f3f !important",
+          WebkitTextFillColor: "#3b1f3f !important",
+          opacity: "1 !important",
+        },
+      },
+    },
+
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          "&:hover": {
+            backgroundColor: "rgba(192, 109, 178, 0.15)",
+          },
+          "&.Mui-selected": {
+            backgroundColor: "rgba(192, 109, 178, 0.25)",
+            "&:hover": {
+              backgroundColor: "rgba(192, 109, 178, 0.35)",
+            },
+          },
         },
       },
     },
