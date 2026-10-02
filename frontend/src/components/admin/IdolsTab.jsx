@@ -105,7 +105,22 @@ const IdolsTab = () => {
       return;
     }
 
-    // will update when have editing ID and create when don't have ID
+    // 验证 Avatar URL（如果填了）
+    if (form.avatarUrl && form.avatarUrl.trim()) {
+      try {
+        const url = new URL(form.avatarUrl);
+        if (!["http:", "https:"].includes(url.protocol)) {
+          enqueueSnackbar("Avatar URL must start with http:// or https://", {
+            variant: "error",
+          });
+          return;
+        }
+      } catch {
+        enqueueSnackbar("Invalid Avatar URL", { variant: "error" });
+        return;
+      }
+    }
+
     setSubmitting(true);
     try {
       if (editingId) {

@@ -6,6 +6,8 @@ import { Box, Typography, Tabs, Tab } from "@mui/material";
 
 // Import the admin component for managing idols
 import IdolsTab from "../components/admin/IdolsTab";
+import AgenciesTab from "../components/admin/AgenciesTab";
+import UsersTab from "../components/admin/UsersTab";
 
 // Main admin dashboard page component
 const AdminDashboard = () => {
@@ -49,15 +51,13 @@ const AdminDashboard = () => {
       {tab === "idols" && <IdolsTab />}
 
       {/* Temporary placeholder for the future Agencies management feature */}
-      {tab === "agencies" && (
-        <Typography>Agencies Tab (coming soon)</Typography>
-      )}
+      {tab === "agencies" && <AgenciesTab />}
 
       {/* Temporary placeholder for the future Polls management feature */}
       {tab === "polls" && <Typography>Polls Tab (coming soon)</Typography>}
 
       {/* Temporary placeholder for the future Users management feature */}
-      {tab === "users" && <Typography>Users Tab (coming soon)</Typography>}
+      {tab === "users" && <UsersTab />}
     </Box>
   );
 };

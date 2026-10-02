@@ -17,7 +17,6 @@ const corsHandler = cors({
   methods: "GET,POST,PUT,DELETE,PATCH",
   allowedHeaders: ["Content-Type", "Authorization"],
   optionsSuccessStatus: 200,
-  preflightContinue: true,
 });
 
 app.use(corsHandler);
