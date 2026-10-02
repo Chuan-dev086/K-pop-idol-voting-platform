@@ -22,6 +22,7 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useSnackbar } from "notistack";
 import api from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
@@ -30,7 +31,6 @@ const emptyForm = {
   username: "",
   email: "",
   role: "user",
-  heartBalance: 0,
 };
 
 const UsersTab = () => {
@@ -41,6 +41,11 @@ const UsersTab = () => {
   const [form, setForm] = useState(emptyForm);
   const [submitting, setSubmitting] = useState(false);
 
+  const [giveHeartsOpen, setGiveHeartsOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [giveAmount, setGiveAmount] = useState(50);
+  const [giving, setGiving] = useState(false);
+
   const { user: currentUser } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -48,9 +53,7 @@ const UsersTab = () => {
     try {
       const res = await api.get("/users");
       setUsers(res.data.users);
-    } catch (error) {
-      console.error("LOAD USERS ERROR:", error);
-      console.error("Response:", error.response);
+    } catch {
       enqueueSnackbar("Failed to load users", { variant: "error" });
     } finally {
       setLoading(false);
@@ -67,7 +70,6 @@ const UsersTab = () => {
       username: user.username,
       email: user.email,
       role: user.role,
-      heartBalance: user.heartBalance,
     });
     setOpenModal(true);
   };
@@ -86,20 +88,12 @@ const UsersTab = () => {
       return;
     }
 
-    if (form.heartBalance < 0) {
-      enqueueSnackbar("Heart balance cannot be negative", {
-        variant: "error",
-      });
-      return;
-    }
-
     setSubmitting(true);
     try {
       await api.put(`/users/${editingId}`, {
         username: form.username,
         email: form.email,
         role: form.role,
-        heartBalance: parseInt(form.heartBalance, 10),
       });
 
       enqueueSnackbar("User updated successfully", { variant: "success" });
@@ -123,6 +117,42 @@ const UsersTab = () => {
     } catch (error) {
       const msg = error.response?.data?.message || "Delete failed";
       enqueueSnackbar(msg, { variant: "error" });
+    }
+  };
+
+  const handleOpenGiveHearts = (user) => {
+    setSelectedUser(user);
+    setGiveAmount(50);
+    setGiveHeartsOpen(true);
+  };
+
+  const handleCloseGiveHearts = () => {
+    setGiveHeartsOpen(false);
+    setSelectedUser(null);
+  };
+
+  const handleGiveHearts = async () => {
+    const amount = parseInt(giveAmount, 10);
+    if (isNaN(amount) || amount <= 0) {
+      enqueueSnackbar("Amount must be a positive number", {
+        variant: "error",
+      });
+      return;
+    }
+
+    setGiving(true);
+    try {
+      await api.post(`/users/${selectedUser._id}/give-hearts`, { amount });
+      enqueueSnackbar(`Gave ${amount} hearts to ${selectedUser.username}`, {
+        variant: "success",
+      });
+      handleCloseGiveHearts();
+      fetchData();
+    } catch (error) {
+      const msg = error.response?.data?.message || "Give hearts failed";
+      enqueueSnackbar(msg, { variant: "error" });
+    } finally {
+      setGiving(false);
     }
   };
 
@@ -202,6 +232,18 @@ const UsersTab = () => {
                       >
                         <EditIcon />
                       </IconButton>
+
+                      {!isAdmin && (
+                        <IconButton
+                          size="small"
+                          color="success"
+                          onClick={() => handleOpenGiveHearts(user)}
+                          title="Give Hearts"
+                        >
+                          <FavoriteIcon />
+                        </IconButton>
+                      )}
+
                       <IconButton
                         size="small"
                         color="error"
@@ -219,6 +261,7 @@ const UsersTab = () => {
         </Table>
       </TableContainer>
 
+      {/* Edit User Modal */}
       <Dialog
         open={openModal}
         onClose={handleCloseModal}
@@ -255,20 +298,10 @@ const UsersTab = () => {
             onChange={(e) => setForm({ ...form, role: e.target.value })}
             disabled={isEditingSelf}
             helperText={isEditingSelf ? "You cannot change your own role" : ""}
-            sx={{ mb: 2 }}
           >
             <MenuItem value="user">User</MenuItem>
             <MenuItem value="admin">Admin</MenuItem>
           </TextField>
-
-          <TextField
-            label="Heart Balance"
-            type="number"
-            fullWidth
-            value={form.heartBalance}
-            onChange={(e) => setForm({ ...form, heartBalance: e.target.value })}
-            slotProps={{ htmlInput: { min: 0 } }}
-          />
         </DialogContent>
 
         <DialogActions>
@@ -280,6 +313,46 @@ const UsersTab = () => {
             disabled={submitting}
           >
             {submitting ? "Saving..." : "Update"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Give Hearts Modal */}
+      <Dialog
+        open={giveHeartsOpen}
+        onClose={handleCloseGiveHearts}
+        fullWidth
+        maxWidth="xs"
+      >
+        <DialogTitle>Give Hearts</DialogTitle>
+
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            To: <strong>{selectedUser?.username}</strong>
+            <br />
+            Current: <strong>{selectedUser?.heartBalance}</strong> hearts
+          </Typography>
+
+          <TextField
+            label="Amount"
+            type="number"
+            fullWidth
+            value={giveAmount}
+            onChange={(e) => setGiveAmount(e.target.value)}
+            slotProps={{ htmlInput: { min: 1 } }}
+            helperText="Positive number of hearts to add"
+          />
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleCloseGiveHearts}>Cancel</Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleGiveHearts}
+            disabled={giving}
+          >
+            {giving ? "Giving..." : "Give"}
           </Button>
         </DialogActions>
       </Dialog>

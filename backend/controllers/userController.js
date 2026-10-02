@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const HeartLog = require("../models/HeartLog");
 
 exports.getAllUsers = async (req, res) => {
   try {
@@ -161,6 +162,53 @@ exports.deleteUser = async (req, res) => {
     return res.status(200).json({ message: "User deleted successfully " });
   } catch (error) {
     console.log("DELETE USER ERROR:", error);
+    if (error.name === "CastError") {
+      return res.status(400).json({ message: "Invalid User ID format" });
+    }
+    return res.status(500).json({ message: "Server error, please try again" });
+  }
+};
+
+exports.giveHearts = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { amount, reason } = req.body;
+
+    const parsedAmount = parseInt(amount, 10);
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      return res
+        .status(400)
+        .json({ message: "Amount must be a positive number" });
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.role === "admin") {
+      return res.status(400).json({ message: "Cannot give hearts to admin" });
+    }
+
+    user.heartBalance += parsedAmount;
+    await user.save();
+
+    await HeartLog.create({
+      userId: user._id,
+      type: "ADMIN_GRANT",
+      amount: parsedAmount,
+    });
+
+    return res.status(200).json({
+      message: `Gave ${parsedAmount} hearts to ${user.username}`,
+      user: {
+        id: user._id,
+        username: user.username,
+        heartBalance: user.heartBalance,
+      },
+    });
+  } catch (error) {
+    console.log("GIVE HEARTS ERROR:", error);
     if (error.name === "CastError") {
       return res.status(400).json({ message: "Invalid User ID format" });
     }

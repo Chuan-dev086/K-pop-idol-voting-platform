@@ -172,10 +172,10 @@ const IdolDirectory = () => {
           {idols.map((idol) => (
             <Grid
               size={{
-                xs: 12, // Mobile: 1 card per row
-                sm: 6, // Small screens: 2 cards per row
-                md: 4, // Medium screens: 3 cards per row
-                lg: 3, // Large screens: 4 cards per row
+                xs: 12,
+                sm: 6,
+                md: 4,
+                lg: 2.4,
               }}
               // Use MongoDB's unique _id value as React's list key
               key={idol._id}

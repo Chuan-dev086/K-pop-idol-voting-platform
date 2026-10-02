@@ -35,8 +35,8 @@ const IdolCard = ({ idol }) => {
           src={idol.avatarUrl}
           alt={idol.name}
           sx={{
-            width: 80,
-            height: 80,
+            width: 120,
+            height: 120,
             mb: 2,
             border: "3px solid #ffffff",
             boxShadow: "0 2px 10px rgba(192, 109, 178, 0.2)",

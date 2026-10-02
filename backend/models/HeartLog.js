@@ -8,7 +8,7 @@ const heartLogSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ["CHECK_IN", "TASK_REWARD", "VOTE_SPENT"],
+    enum: ["CHECK_IN", "TASK_REWARD", "VOTE_SPENT", "ADMIN_GRANT"],
     required: true,
   },
   amount: {
