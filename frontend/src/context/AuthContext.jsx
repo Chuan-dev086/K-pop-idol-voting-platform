@@ -34,8 +34,16 @@ export const AuthProvider = ({ children }) => {
     return res.data;
   };
 
+  const refreshUser = async () => {
+    const res = await api.get("/auth/me");
+    const updatedUser = res.data.user;
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    return updatedUser;
+  };
+
   //   pack the object and set to provider
-  const value = { user, login, logout, setUser, register };
+  const value = { user, login, logout, setUser, register, refreshUser };
 
   //   return the value and render out the children
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

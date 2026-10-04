@@ -63,7 +63,7 @@ const PollDetail = () => {
 
   // Get the currently logged-in user from AuthContext
   // user is usually null when the visitor is not logged in
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
 
   // Get the Snackbar function for success, warning, and error notifications
   const { enqueueSnackbar } = useSnackbar();
@@ -195,6 +195,7 @@ const PollDetail = () => {
       // This refreshes the vote counts and ranking without reloading the page
       const res = await api.get(`/polls/${id}`);
       setPoll(res.data.poll);
+      await refreshUser();
     } catch (error) {
       // Use the backend error message if it exists
       // Otherwise, use a fallback error message
