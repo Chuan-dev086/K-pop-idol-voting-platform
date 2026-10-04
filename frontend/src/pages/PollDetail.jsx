@@ -328,7 +328,7 @@ const PollDetail = () => {
                     color: "primary.main",
                   }}
                 >
-                  #{index + 1}
+                  No.{index + 1}
                 </Typography>
 
                 {/* Display the idol image, or the first letter of the idol name as fallback */}
@@ -371,7 +371,7 @@ const PollDetail = () => {
                 </Typography>
 
                 {/* Only allow voting when the poll status is active */}
-                {poll.status === "active" && (
+                {poll.status === "active" && user?.role !== "admin" && (
                   <Button
                     variant="contained"
                     color="secondary"

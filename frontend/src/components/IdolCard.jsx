@@ -7,9 +7,29 @@ import {
   Chip,
 } from "@mui/material";
 
+// Category 颜色映射（对象查表）
+const CATEGORY_STYLES = {
+  Soloist: {
+    backgroundColor: "rgba(175, 22, 150, 0.15)",
+    color: "#af1696",
+    borderColor: "#af1696",
+  },
+  "Girl Group": {
+    backgroundColor: "rgba(255, 45, 138, 0.15)",
+    color: "#ff2d8a",
+    borderColor: "#ff2d8a",
+  },
+  "Boy Group": {
+    backgroundColor: "rgba(33, 150, 243, 0.15)",
+    color: "#1976d2",
+    borderColor: "#1976d2",
+  },
+};
+
 const IdolCard = ({ idol }) => {
-  // if don't have idol will return null
   if (!idol) return null;
+
+  const categoryStyle = CATEGORY_STYLES[idol.category] || {};
 
   return (
     <Card
@@ -38,23 +58,20 @@ const IdolCard = ({ idol }) => {
             width: 120,
             height: 120,
             mb: 2,
-            border: "3px solid #ffffff",
-            boxShadow: "0 2px 10px rgba(192, 109, 178, 0.2)",
+            border: "4px solid #ffffff",
+            boxShadow: "0 4px 15px rgba(192, 109, 178, 0.25)",
             backgroundColor: "primary.main",
-            fontSize: "2rem",
+            fontSize: "2.5rem",
             fontWeight: "bold",
           }}
         >
-          {/* if don't have picture the avatar will take the first letter and turn to capital letter to display  */}
           {idol.name?.charAt(0).toUpperCase()}
         </Avatar>
 
-        {/* idol name  */}
         <Typography variant="h6" sx={{ fontWeight: "bold", mb: 0.5 }}>
           {idol.name}
         </Typography>
 
-        {/* idol agency name  */}
         <Typography
           variant="body2"
           color="text.secondary"
@@ -73,19 +90,20 @@ const IdolCard = ({ idol }) => {
             justifyContent: "space-between",
           }}
         >
-          {/* the category badge  */}
           <Chip
             label={idol.category}
             size="small"
-            color="primary"
             variant="outlined"
+            sx={{
+              fontWeight: 600,
+              ...categoryStyle,
+            }}
           />
 
           <Typography
             variant="body2"
             sx={{ fontWeight: 600, color: "primary.main" }}
           >
-            {/* put the thousand seperator for votes  eg=> 123456  become 123,456 */}
             {idol.totalVotes?.toLocaleString()} votes
           </Typography>
         </Box>
