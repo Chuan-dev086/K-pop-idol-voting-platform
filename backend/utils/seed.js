@@ -9,6 +9,10 @@ const Poll = require("../models/Poll");
 const VoteTransaction = require("../models/VoteTransaction");
 const HeartLog = require("../models/HeartLog");
 
+// 生成占位头像 URL
+const avatar = (name) =>
+  `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=c06db2&color=fff&size=200&bold=true`;
+
 const seed = async () => {
   try {
     await connectDB();
@@ -34,31 +38,162 @@ const seed = async () => {
       { name: "JYP Entertainment", country: "South Korea", foundedYear: 1997 },
       { name: "YG Entertainment", country: "South Korea", foundedYear: 1996 },
       { name: "HYBE", country: "South Korea", foundedYear: 2005 },
+      {
+        name: "Starship Entertainment",
+        country: "South Korea",
+        foundedYear: 2008,
+      },
+      {
+        name: "CUBE Entertainment",
+        country: "South Korea",
+        foundedYear: 2006,
+      },
+      { name: "S2 Entertainment", country: "South Korea", foundedYear: 2021 },
     ];
 
     const agencies = await Agency.insertMany(agenciesData);
-    const [sm, jyp, yg, hybe] = agencies;
+
+    const sm = agencies.find((a) => a.name === "SM Entertainment");
+    const jyp = agencies.find((a) => a.name === "JYP Entertainment");
+    const yg = agencies.find((a) => a.name === "YG Entertainment");
+    const hybe = agencies.find((a) => a.name === "HYBE");
+    const starship = agencies.find((a) => a.name === "Starship Entertainment");
+    const cube = agencies.find((a) => a.name === "CUBE Entertainment");
+    const s2 = agencies.find((a) => a.name === "S2 Entertainment");
+
     console.log(`Created ${agencies.length} agencies`);
 
     // ================================
     // 2. IDOLS
     // ================================
     const idolsData = [
-      { name: "IU", category: "Soloist", agencyId: sm._id },
-      { name: "Taeyeon", category: "Soloist", agencyId: sm._id },
-      { name: "aespa", category: "Girl Group", agencyId: sm._id },
-      { name: "TWICE", category: "Girl Group", agencyId: jyp._id },
-      { name: "Stray Kids", category: "Boy Group", agencyId: jyp._id },
-      { name: "BLACKPINK", category: "Girl Group", agencyId: yg._id },
-      { name: "BIGBANG", category: "Boy Group", agencyId: yg._id },
-      { name: "BTS", category: "Boy Group", agencyId: hybe._id },
-      { name: "NewJeans", category: "Girl Group", agencyId: hybe._id },
+      // SM Entertainment
+      {
+        name: "IU",
+        category: "Soloist",
+        agencyId: sm._id,
+        avatarUrl: avatar("IU"),
+      },
+      {
+        name: "Taeyeon",
+        category: "Soloist",
+        agencyId: sm._id,
+        avatarUrl: avatar("Taeyeon"),
+      },
+      {
+        name: "aespa",
+        category: "Girl Group",
+        agencyId: sm._id,
+        avatarUrl: avatar("aespa"),
+      },
+      {
+        name: "Red Velvet",
+        category: "Girl Group",
+        agencyId: sm._id,
+        avatarUrl: avatar("Red Velvet"),
+      },
+      {
+        name: "Girls Generation",
+        category: "Girl Group",
+        agencyId: sm._id,
+        avatarUrl: avatar("Girls Generation"),
+      },
+
+      // JYP Entertainment
+      {
+        name: "TWICE",
+        category: "Girl Group",
+        agencyId: jyp._id,
+        avatarUrl: avatar("TWICE"),
+      },
+      {
+        name: "Stray Kids",
+        category: "Boy Group",
+        agencyId: jyp._id,
+        avatarUrl: avatar("Stray Kids"),
+      },
+      {
+        name: "NMIXX",
+        category: "Girl Group",
+        agencyId: jyp._id,
+        avatarUrl: avatar("NMIXX"),
+      },
+      {
+        name: "ITZY",
+        category: "Girl Group",
+        agencyId: jyp._id,
+        avatarUrl: avatar("ITZY"),
+      },
+
+      // YG Entertainment
+      {
+        name: "BLACKPINK",
+        category: "Girl Group",
+        agencyId: yg._id,
+        avatarUrl: avatar("BLACKPINK"),
+      },
+      {
+        name: "BIGBANG",
+        category: "Boy Group",
+        agencyId: yg._id,
+        avatarUrl: avatar("BIGBANG"),
+      },
+      {
+        name: "Baby Monster",
+        category: "Girl Group",
+        agencyId: yg._id,
+        avatarUrl: avatar("Baby Monster"),
+      },
+
+      // HYBE
+      {
+        name: "BTS",
+        category: "Boy Group",
+        agencyId: hybe._id,
+        avatarUrl: avatar("BTS"),
+      },
+      {
+        name: "NewJeans",
+        category: "Girl Group",
+        agencyId: hybe._id,
+        avatarUrl: avatar("NewJeans"),
+      },
+
+      // Starship Entertainment
+      {
+        name: "IVE",
+        category: "Girl Group",
+        agencyId: starship._id,
+        avatarUrl: avatar("IVE"),
+      },
+      {
+        name: "SISTAR",
+        category: "Girl Group",
+        agencyId: starship._id,
+        avatarUrl: avatar("SISTAR"),
+      },
+
+      // CUBE Entertainment
+      {
+        name: "i-dle",
+        category: "Girl Group",
+        agencyId: cube._id,
+        avatarUrl: avatar("i-dle"),
+      },
+
+      // S2 Entertainment
+      {
+        name: "KISS OF LIFE",
+        category: "Girl Group",
+        agencyId: s2._id,
+        avatarUrl: avatar("KISS OF LIFE"),
+      },
     ];
 
     const idols = await Idol.insertMany(idolsData);
     console.log(`Created ${idols.length} idols`);
 
-    // 用 find 按名字取常用的 idol，后面创建 poll 和投票要用
+    // 取常用 idol（按名字查找）
     const iu = idols.find((i) => i.name === "IU");
     const aespa = idols.find((i) => i.name === "aespa");
     const bts = idols.find((i) => i.name === "BTS");
@@ -96,19 +231,16 @@ const seed = async () => {
     // ================================
     const now = new Date();
 
-    // active poll: 现在在区间内
     const activeStart = new Date(now);
-    activeStart.setDate(now.getDate() - 7); // 7 天前开始
+    activeStart.setDate(now.getDate() - 7);
     const activeEnd = new Date(now);
-    activeEnd.setDate(now.getDate() + 30); // 30 天后结束
+    activeEnd.setDate(now.getDate() + 30);
 
-    // upcoming poll: 未来开始
     const upcomingStart = new Date(now);
     upcomingStart.setDate(now.getDate() + 30);
     const upcomingEnd = new Date(now);
     upcomingEnd.setDate(now.getDate() + 60);
 
-    // ended poll: 已经结束
     const endedStart = new Date(now);
     endedStart.setDate(now.getDate() - 60);
     const endedEnd = new Date(now);
@@ -152,11 +284,8 @@ const seed = async () => {
     console.log(`Created 3 polls (1 active, 1 upcoming, 1 ended)`);
 
     // ================================
-    // 5. VOTES (让 xander 和 bob 各投几次票)
+    // 5. VOTES
     // ================================
-    // 注意：这里只是塞测试数据，不走 castVote 的完整逻辑
-    // 所以要手动改 heartBalance、voteCount、totalVotes
-
     const xanderVotes = 30;
     const bobVotes = 15;
 
