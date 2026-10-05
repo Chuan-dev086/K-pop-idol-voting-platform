@@ -23,6 +23,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { useSnackbar } from "notistack";
 import dayjs from "dayjs";
 import api from "../../services/api";
@@ -47,6 +48,7 @@ const PollsTab = () => {
   const [loading, setLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [duplicatingFrom, setDuplicatingFrom] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [submitting, setSubmitting] = useState(false);
 
@@ -73,12 +75,14 @@ const PollsTab = () => {
 
   const handleOpenAdd = () => {
     setEditingId(null);
+    setDuplicatingFrom(null);
     setForm(emptyForm);
     setOpenModal(true);
   };
 
   const handleOpenEdit = (poll) => {
     setEditingId(poll._id);
+    setDuplicatingFrom(null);
     setForm({
       title: poll.title,
       description: poll.description || "",
@@ -89,10 +93,26 @@ const PollsTab = () => {
     setOpenModal(true);
   };
 
+  const handleOpenDuplicate = (poll) => {
+    setEditingId(null);
+    setDuplicatingFrom(poll._id);
+
+    setForm({
+      title: `${poll.title} (Copy)`,
+      description: poll.description || "",
+      startDate: dayjs().add(1, "day").format("YYYY-MM-DD"),
+      endDate: dayjs().add(31, "day").format("YYYY-MM-DD"),
+      candidateIds: poll.candidates.map((c) => c.idolId?._id || c.idolId),
+    });
+
+    setOpenModal(true);
+  };
+
   const handleCloseModal = () => {
     setOpenModal(false);
     setForm(emptyForm);
     setEditingId(null);
+    setDuplicatingFrom(null);
   };
 
   const handleSubmit = async () => {
@@ -137,7 +157,12 @@ const PollsTab = () => {
         enqueueSnackbar("Poll updated successfully", { variant: "success" });
       } else {
         await api.post("/polls", payload);
-        enqueueSnackbar("Poll created successfully", { variant: "success" });
+        enqueueSnackbar(
+          duplicatingFrom
+            ? "Poll duplicated successfully"
+            : "Poll created successfully",
+          { variant: "success" },
+        );
       }
 
       handleCloseModal();
@@ -170,6 +195,12 @@ const PollsTab = () => {
       </Box>
     );
   }
+
+  const modalTitle = editingId
+    ? "Edit Poll"
+    : duplicatingFrom
+      ? "Duplicate Poll"
+      : "Add Poll";
 
   return (
     <Box>
@@ -240,13 +271,25 @@ const PollsTab = () => {
                       size="small"
                       color="primary"
                       onClick={() => handleOpenEdit(poll)}
+                      title="Edit"
                     >
                       <EditIcon />
                     </IconButton>
+
+                    <IconButton
+                      size="small"
+                      color="info"
+                      onClick={() => handleOpenDuplicate(poll)}
+                      title="Duplicate"
+                    >
+                      <ContentCopyIcon />
+                    </IconButton>
+
                     <IconButton
                       size="small"
                       color="error"
                       onClick={() => handleDelete(poll)}
+                      title="Delete"
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -264,7 +307,7 @@ const PollsTab = () => {
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle>{editingId ? "Edit Poll" : "Add Poll"}</DialogTitle>
+        <DialogTitle>{modalTitle}</DialogTitle>
 
         <DialogContent>
           <TextField
@@ -313,7 +356,15 @@ const PollsTab = () => {
             fullWidth
             required
             value={form.candidateIds}
-            onChange={(e) => setForm({ ...form, candidateIds: e.target.value })}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                candidateIds:
+                  typeof e.target.value === "string"
+                    ? e.target.value.split(",")
+                    : e.target.value,
+              })
+            }
             slotProps={{
               select: {
                 multiple: true,
@@ -341,7 +392,13 @@ const PollsTab = () => {
             onClick={handleSubmit}
             disabled={submitting}
           >
-            {submitting ? "Saving..." : editingId ? "Update" : "Create"}
+            {submitting
+              ? "Saving..."
+              : editingId
+                ? "Update"
+                : duplicatingFrom
+                  ? "Create Copy"
+                  : "Create"}
           </Button>
         </DialogActions>
       </Dialog>
