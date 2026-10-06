@@ -105,7 +105,7 @@ const IdolsTab = () => {
       return;
     }
 
-    // 验证 Avatar URL（如果填了）
+    // validation checking for avatr URL
     if (form.avatarUrl && form.avatarUrl.trim()) {
       try {
         const url = new URL(form.avatarUrl);
@@ -121,8 +121,10 @@ const IdolsTab = () => {
       }
     }
 
+    // after validation check start submit the data to backend
     setSubmitting(true);
     try {
+      // if editingID exist will run put request if not will create an idols
       if (editingId) {
         await api.put(`/idols/${editingId}`, form);
         enqueueSnackbar("Idol updated successfully", { variant: "success" });

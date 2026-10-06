@@ -25,12 +25,14 @@ import AddIcon from "@mui/icons-material/Add";
 import { useSnackbar } from "notistack";
 import api from "../../services/api";
 
+// set the form become empty form
 const emptyForm = {
   name: "",
   country: "",
   foundedYear: "",
 };
 
+// list the dropdown value
 const COUNTRIES = ["South Korea", "United States", "Japan", "China", "Other"];
 
 const AgenciesTab = () => {
@@ -43,6 +45,9 @@ const AgenciesTab = () => {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  // there is a function for fetch data it will run at the time when page first open
+  // useCallback is to memorize the state and prevent rerendering again
+  // this function fetch the data from backend
   const fetchData = useCallback(async () => {
     try {
       const res = await api.get("/agencies");
@@ -54,16 +59,21 @@ const AgenciesTab = () => {
     }
   }, [enqueueSnackbar]);
 
+  // call the fetch data function
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
+  // add agencies function when click the add button will open the form and clear the form input set the editngId become null to know that it is add
   const handleOpenAdd = () => {
     setEditingId(null);
     setForm(emptyForm);
     setOpenModal(true);
   };
 
+  // if user click edit button will set editngId become the id send in and get the info to put in edit form and open the form
+  // if have agency value then use it if don't have just leave it empty
+  //  || means OR operator
   const handleOpenEdit = (agency) => {
     setEditingId(agency._id);
     setForm({
@@ -74,24 +84,29 @@ const AgenciesTab = () => {
     setOpenModal(true);
   };
 
+  // when close the form will empty the form and editngId
   const handleCloseModal = () => {
     setOpenModal(false);
     setForm(emptyForm);
     setEditingId(null);
   };
 
+  // the validation function when form is submit
   const handleSubmit = async () => {
-    // 验证 1: name 必填
+    // name is required
     if (!form.name.trim()) {
       enqueueSnackbar("Name is required", { variant: "error" });
       return;
     }
 
-    // 验证 2: foundedYear 范围
+    // founded year range
     if (form.foundedYear) {
+      // get the current year
       const currentYear = new Date().getFullYear();
+      // convert the input value to integer/number in the base-10 format
       const year = parseInt(form.foundedYear, 10);
 
+      // check the year value with check if it is number or not and the range must between 1900 and current year if everything is OK then it will return
       if (isNaN(year) || year < 1900 || year > currentYear) {
         enqueueSnackbar(`Year must be between 1900 and ${currentYear}`, {
           variant: "error",
@@ -100,8 +115,11 @@ const AgenciesTab = () => {
       }
     }
 
+    // when pass the validation will disabled the submit button
     setSubmitting(true);
     try {
+      // the payload is the data will send to backend
+      // will convert the foundedyear from string to number
       const payload = {
         name: form.name,
         country: form.country,
@@ -110,6 +128,7 @@ const AgenciesTab = () => {
           : undefined,
       };
 
+      // if have editngId will run api.put request and update agency if not will create agency
       if (editingId) {
         await api.put(`/agencies/${editingId}`, payload);
         enqueueSnackbar("Agency updated successfully", { variant: "success" });
@@ -118,6 +137,7 @@ const AgenciesTab = () => {
         enqueueSnackbar("Agency created successfully", { variant: "success" });
       }
 
+      // when successfully create or updated will close the form and directly get the data from backend
       handleCloseModal();
       fetchData();
     } catch (error) {
@@ -128,9 +148,11 @@ const AgenciesTab = () => {
     }
   };
 
+  // delete agency function will pop out alert let user confirm the delete if user click cancel will return and stop the delete function 
   const handleDelete = async (agency) => {
     if (!window.confirm(`Delete "${agency.name}"?`)) return;
 
+    // if user click confirm will run api.delete to delete the agency in  backend 
     try {
       await api.delete(`/agencies/${agency._id}`);
       enqueueSnackbar("Agency deleted successfully", { variant: "success" });
@@ -140,7 +162,7 @@ const AgenciesTab = () => {
       enqueueSnackbar(msg, { variant: "error" });
     }
   };
-
+// the loading UI 
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>

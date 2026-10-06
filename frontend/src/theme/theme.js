@@ -31,7 +31,7 @@ const theme = createTheme({
     // Used by components with color="primary"
     primary: {
       main: "#af1696",
-      dark: "#8a0f77", 
+      dark: "#8a0f77",
       light: "#e3b5da",
       contrastText: "#ffffff",
     },
@@ -200,6 +200,8 @@ const theme = createTheme({
         root: {
           // Use larger rounded corners for a soft K-pop-inspired design
           borderRadius: 32,
+          // customized the backgroud color for every card
+          backgroundColor: "rgba(255, 240, 246, 0.75)",
 
           // Add blur behind semi-transparent card backgrounds
           backdropFilter: "blur(8px)",
@@ -216,6 +218,14 @@ const theme = createTheme({
       },
     },
 
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          // Use a soft pink color to match the application's overall theme
+          backgroundColor: "rgba(255, 245, 250, 0.9)", 
+        },
+      },
+    },
     // ============================================
     // NEW: Global Select styles
     // Ensures the selected value text always uses
