@@ -9,6 +9,7 @@ import PollDetail from "./pages/PollDetail";
 import IdolDirectory from "./pages/IdolDirectory";
 import UserProfile from "./pages/UserProfile";
 import AdminDashboard from "./pages/AdminDashboard";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="*" element={<NotFound />}></Route>
       </Routes>
     </>
   );
