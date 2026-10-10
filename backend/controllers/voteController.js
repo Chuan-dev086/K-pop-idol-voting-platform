@@ -161,3 +161,29 @@ exports.getHistory = async (req, res) => {
     return res.status(500).json({ message: "Server error, please try again" });
   }
 };
+
+exports.getPollMessages = async (req, res) => {
+  try {
+    const { pollId } = req.params;
+
+    const messages = await VoteTransaction.find({
+      pollId,
+      message: { $ne: "" },
+    })
+      .populate("userId", "username")
+      .populate("idolId", "name avatarUrl")
+      .sort({ createdAt: -1 })
+      .limit(30);
+
+    return res.status(200).json({
+      count: messages.length,
+      messages,
+    });
+  } catch (error) {
+    console.log("GET POLL MESSAGES ERROR:", error);
+    if (error.name === "CastError") {
+      return res.status(400).json({ message: "Invalid Poll ID format" });
+    }
+    return res.status(500).json({ message: "Server error, please try again" });
+  }
+};
