@@ -93,6 +93,12 @@ exports.createPoll = async (req, res) => {
     // the startdate must earlier than enddate
     const start = new Date(startDate);
     const end = new Date(endDate);
+
+    // the date format checking
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      return res.status(400).json({ message: "Invalid date format" });
+    }
+
     if (start >= end) {
       return res
         .status(400)
@@ -164,10 +170,14 @@ exports.createPoll = async (req, res) => {
     console.log("CREATE POLL ERROR:", error);
 
     if (error.name === "CastError") {
-      return res.status(400).json({ message: "Invalid poll ID format" });
+      return res.status(400).json({ message: "Invalid ID format" });
     }
 
-    return res.status(500).json({ message: "Server error, Please try again" });
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ message: error.message });
+    }
+
+    return res.status(500).json({ message: "Server error, please try again" });
   }
 };
 
@@ -282,10 +292,16 @@ exports.updatePoll = async (req, res) => {
     });
   } catch (error) {
     console.log("UPDATE POLL ERROR:", error);
+
     if (error.name === "CastError") {
       return res.status(400).json({ message: "Invalid ID format" });
     }
-    return res.status(500).json({ message: "Server error,Please try again" });
+
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ message: error.message });
+    }
+
+    return res.status(500).json({ message: "Server error, please try again" });
   }
 };
 
@@ -306,7 +322,7 @@ exports.deletePoll = async (req, res) => {
       });
     }
 
-    // delete the poll 
+    // delete the poll
     await poll.deleteOne();
 
     return res.status(200).json({
@@ -316,8 +332,13 @@ exports.deletePoll = async (req, res) => {
     console.log("DELETE POLL ERROR:", error);
 
     if (error.name === "CastError") {
-      return res.status(400).json({ message: "Invalid Poll ID format " });
+      return res.status(400).json({ message: "Invalid ID format" });
     }
-    return res.status(500).json({ message: "Server error, please try again " });
+
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ message: error.message });
+    }
+
+    return res.status(500).json({ message: "Server error, please try again" });
   }
 };
