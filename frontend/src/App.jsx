@@ -10,6 +10,7 @@ import IdolDirectory from "./pages/IdolDirectory";
 import UserProfile from "./pages/UserProfile";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
+import IdolDetail from "./pages/IdolDetail";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/polls" element={<PollList />} />
         <Route path="/polls/:id" element={<PollDetail />} />
         <Route path="/idols" element={<IdolDirectory />} />
+        <Route path="/idols/:id" element={<IdolDetail />} />
 
         {/* need login */}
         <Route

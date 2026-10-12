@@ -5,6 +5,7 @@ const authenticate = require("../middleware/auth");
 const isAdmin = require("../middleware/admin");
 
 router.get("/", idolController.getAllIdols);
+router.get("/:id/polls", idolController.getIdolPolls);
 router.get("/:id", idolController.getIdolById);
 router.post("/", authenticate, isAdmin, idolController.createIdol);
 router.put("/:id", authenticate, isAdmin, idolController.updateIdol);

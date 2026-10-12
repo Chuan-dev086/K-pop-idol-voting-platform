@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import {
   Card,
   CardContent,
@@ -6,30 +7,7 @@ import {
   Avatar,
   Chip,
 } from "@mui/material";
-
-// Map each idol category to its corresponding color styles
-const CATEGORY_STYLES = {
-  // Styling for solo artists
-  Soloist: {
-    backgroundColor: "rgba(175, 22, 150, 0.15)",
-    color: "#af1696",
-    borderColor: "#af1696",
-  },
-
-  // Styling for girl groups
-  "Girl Group": {
-    backgroundColor: "rgba(255, 45, 138, 0.15)",
-    color: "#ff2d8a",
-    borderColor: "#ff2d8a",
-  },
-
-  // Styling for boy groups
-  "Boy Group": {
-    backgroundColor: "rgba(33, 150, 243, 0.15)",
-    color: "#1976d2",
-    borderColor: "#1976d2",
-  },
-};
+import { CATEGORY_STYLES } from "../utils/categoryStyles";
 
 // Reusable card component for displaying idol information
 const IdolCard = ({ idol }) => {
@@ -44,7 +22,10 @@ const IdolCard = ({ idol }) => {
 
   return (
     <Card
+      component={Link}
+      to={`/idols/${idol._id}`}
       sx={{
+        display: "block",
         borderRadius: 4,
 
         // Add a soft shadow around the card
@@ -52,6 +33,10 @@ const IdolCard = ({ idol }) => {
 
         // Add a smooth hover animation
         transition: "transform 0.2s ease, box-shadow 0.2s ease",
+
+        // Remove default link styling
+        textDecoration: "none",
+        color: "inherit",
 
         // Move the card slightly upward when hovered
         "&:hover": {

@@ -2,6 +2,7 @@ const Idol = require("../models/Idol");
 const Agency = require("../models/Agency");
 const Poll = require("../models/Poll");
 const mongoose = require("mongoose");
+const getPollStatus = require("../utils/pollStatus");
 
 exports.getAllIdols = async (req, res) => {
   try {
@@ -186,7 +187,7 @@ exports.deleteIdol = async (req, res) => {
       return res.status(404).json({ message: "Idol not found" });
     }
 
-    // check the idol in the poll with its idol ID if idol is in the poll cannot delete that idol 
+    // check the idol in the poll with its idol ID if idol is in the poll cannot delete that idol
     const hasPolls = await Poll.findOne({ "candidates.idolId": id });
 
     if (hasPolls) {
@@ -208,5 +209,57 @@ exports.deleteIdol = async (req, res) => {
     return res
       .status(500)
       .json({ message: " Server error , Please try again " });
+  }
+};
+
+exports.getIdolPolls = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate that the idol exists.
+    const idol = await Idol.findById(id);
+
+    if (!idol) {
+      return res.status(404).json({ message: "Idol not found" });
+    }
+
+    // Find all polls that include this idol as a candidate,
+    // sorted by the latest start date first.
+    const polls = await Poll.find({ "candidates.idolId": id }).sort({
+      startDate: -1,
+    });
+
+    // Convert each poll to a plain object, add its status,
+    // and extract this idol's vote count.
+    const result = polls.map((poll) => {
+      const obj = poll.toObject();
+      obj.status = getPollStatus(obj);
+
+      // Find this idol's candidate data inside the poll.
+      const candidate = obj.candidates.find((c) => c.idolId.toString() === id);
+
+      // Use 0 if the candidate or vote count is missing.
+      obj.voteCount = candidate?.voteCount || 0;
+
+      // Remove the full candidates array because it is not needed in the response.
+      delete obj.candidates;
+
+      return obj;
+    });
+
+    // Return the total number of polls and the simplified poll list.
+    return res.status(200).json({
+      count: result.length,
+      polls: result,
+    });
+  } catch (error) {
+    console.log("GET IDOL POLLS ERROR:", error);
+
+    // Handle invalid MongoDB ObjectId formats.
+    if (error.name === "CastError") {
+      return res.status(400).json({ message: "Invalid Idol ID format" });
+    }
+
+    return res.status(500).json({ message: "Server error, please try again" });
   }
 };
