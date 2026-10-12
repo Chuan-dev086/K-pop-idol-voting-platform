@@ -4,7 +4,6 @@ const Poll = require("../models/Poll");
 const Idol = require("../models/Idol");
 const VoteTransaction = require("../models/VoteTransaction");
 const getPollStatus = require("../utils/pollStatus");
-const mongoose = require("mongoose");
 
 exports.checkIn = async (req, res) => {
   try {
@@ -63,10 +62,12 @@ exports.castVote = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // convert the vote to the number and check the vote format and vote cannot be less than 1
-    const parsedVotes = parseInt(votesSpent, 10);
-    if (isNaN(parsedVotes) || parsedVotes < 1) {
-      return res.status(400).json({ message: "Invalid vote count" });
+    // Convert votesSpent to a number and validate that it is a positive integer.
+    const parsedVotes = Number(votesSpent);
+    if (!Number.isInteger(parsedVotes) || parsedVotes < 1) {
+      return res.status(400).json({
+        message: "Vote count must be a positive integer",
+      });
     }
 
     // find the poll in database with poll Id
@@ -131,6 +132,10 @@ exports.castVote = async (req, res) => {
     });
   } catch (error) {
     console.log("CAST VOTE ERROR:", error);
+
+    if (error.name === "CastError") {
+      return res.status(400).json({ message: "Invalid Poll format" });
+    }
     return res.status(500).json({ message: "Server error, please try again" });
   }
 };
