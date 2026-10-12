@@ -29,7 +29,12 @@ exports.getAgencyById = async (req, res) => {
     return res.status(200).json({ agency });
   } catch (error) {
     console.log("GET AGENCY BY ID ERROR:", error);
-    return res.status(500).json({ message: "Server error , Please try again" });
+
+    if (error.name === "CastError") {
+      return res.status(400).json({ message: "Invalid Agency ID format" });
+    }
+
+    return res.status(500).json({ message: "Server error, please try again" });
   }
 };
 
@@ -47,6 +52,22 @@ exports.createAgency = async (req, res) => {
     if (existingName) {
       return res.status(400).json({ message: "Agency already exists" });
     }
+
+    // Validate foundedYear: if provided, it must be a valid year between 1900 and the current year.
+    if (
+      foundedYear !== undefined &&
+      foundedYear !== null &&
+      foundedYear !== ""
+    ) {
+      const year = parseInt(foundedYear, 10);
+      const currentYear = new Date().getFullYear();
+
+      if (isNaN(year) || year < 1900 || year > currentYear) {
+        return res.status(400).json({
+          message: `Founded year must be between 1900 and ${currentYear}`,
+        });
+      }
+    }
     // create the agency in database
     const agency = await Agency.create({
       name,
@@ -61,7 +82,12 @@ exports.createAgency = async (req, res) => {
     });
   } catch (error) {
     console.log("CREATE AGENCY ERROR:", error);
-    return res.status(500).json({ message: "Server error,Please try again " });
+
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ message: error.message });
+    }
+
+    return res.status(500).json({ message: "Server error, please try again" });
   }
 };
 
@@ -90,10 +116,28 @@ exports.updateAgency = async (req, res) => {
       agency.name = name;
     }
 
-    // if country sent renew it
-    // if foundedYear sent then renew it
+    // If country is provided, update it.
+    // If foundedYear is provided, validate it and update it.
     if (country) agency.country = country;
-    if (foundedYear) agency.foundedYear = foundedYear;
+
+    if (
+      foundedYear !== undefined &&
+      foundedYear !== null &&
+      foundedYear !== ""
+    ) {
+      const year = parseInt(foundedYear, 10);
+      const currentYear = new Date().getFullYear();
+
+      // Validate that foundedYear is a valid year between 1900 and the current year.
+      if (isNaN(year) || year < 1900 || year > currentYear) {
+        return res.status(400).json({
+          message: `Founded year must be between 1900 and ${currentYear}`,
+        });
+      }
+
+      // Update the agency's founded year.
+      agency.foundedYear = year;
+    }
 
     // save it to the database
     await agency.save();
@@ -134,7 +178,7 @@ exports.deleteAgency = async (req, res) => {
       });
     }
 
-    // delete the agency from database 
+    // delete the agency from database
     await agency.deleteOne();
 
     return res.status(200).json({
