@@ -9,10 +9,6 @@ const Poll = require("../models/Poll");
 const VoteTransaction = require("../models/VoteTransaction");
 const HeartLog = require("../models/HeartLog");
 
-// 生成占位头像 URL
-const avatar = (name) =>
-  `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=c06db2&color=fff&size=200&bold=true`;
-
 const seed = async () => {
   try {
     await connectDB();
@@ -43,12 +39,9 @@ const seed = async () => {
         country: "South Korea",
         foundedYear: 2008,
       },
-      {
-        name: "CUBE Entertainment",
-        country: "South Korea",
-        foundedYear: 2006,
-      },
+      { name: "CUBE Entertainment", country: "South Korea", foundedYear: 2006 },
       { name: "S2 Entertainment", country: "South Korea", foundedYear: 2021 },
+      { name: "EDAM Entertainment", country: "South Korea", foundedYear: 2019 },
     ];
 
     const agencies = await Agency.insertMany(agenciesData);
@@ -60,43 +53,51 @@ const seed = async () => {
     const starship = agencies.find((a) => a.name === "Starship Entertainment");
     const cube = agencies.find((a) => a.name === "CUBE Entertainment");
     const s2 = agencies.find((a) => a.name === "S2 Entertainment");
+    const edam = agencies.find((a) => a.name === "EDAM Entertainment");
 
     console.log(`Created ${agencies.length} agencies`);
 
     // ================================
-    // 2. IDOLS
+    // 2. IDOLS (with real avatar URLs)
     // ================================
     const idolsData = [
-      // SM Entertainment
+      // EDAM Entertainment
       {
         name: "IU",
         category: "Soloist",
-        agencyId: sm._id,
-        avatarUrl: avatar("IU"),
+        agencyId: edam._id,
+        avatarUrl:
+          "https://bucket-image.inkmaginecms.com/9dde7c0f-ade5-407b-98ce-c69dfa0ac58f/image/2026/04/b76c5f60-0448-46d4-89e6-e3178f913432.webp",
       },
+
+      // SM Entertainment
       {
         name: "Taeyeon",
         category: "Soloist",
         agencyId: sm._id,
-        avatarUrl: avatar("Taeyeon"),
+        avatarUrl:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTB2yZPSD_zkgXsw2bA6JbmW7AEe1oOWSDZwqTSu46kDQ&s=10",
       },
       {
         name: "aespa",
         category: "Girl Group",
         agencyId: sm._id,
-        avatarUrl: avatar("aespa"),
+        avatarUrl:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQR0rAqXv5BhBEEYwiWjmxiWLDTSCh5OSe5CWDKtyDHtKp8hOP6I80jNQPq&s=10",
       },
       {
         name: "Red Velvet",
         category: "Girl Group",
         agencyId: sm._id,
-        avatarUrl: avatar("Red Velvet"),
+        avatarUrl:
+          "https://i.pinimg.com/originals/8d/1e/f1/8d1ef1c741f8f448faee6bfa186e2e2a.jpg",
       },
       {
         name: "Girls Generation",
         category: "Girl Group",
         agencyId: sm._id,
-        avatarUrl: avatar("Girls Generation"),
+        avatarUrl:
+          "https://static.wikia.nocookie.net/smtown/images/9/90/Forever1snsd3.jpg/revision/latest?cb=20230615195537",
       },
 
       // JYP Entertainment
@@ -104,25 +105,29 @@ const seed = async () => {
         name: "TWICE",
         category: "Girl Group",
         agencyId: jyp._id,
-        avatarUrl: avatar("TWICE"),
+        avatarUrl:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJFyqN9acnUllY7vzfVm_LdNgRdrQkD2k62NcLTe9mgctVgk7gPwkMt2Nb&s=10",
       },
       {
         name: "Stray Kids",
         category: "Boy Group",
         agencyId: jyp._id,
-        avatarUrl: avatar("Stray Kids"),
+        avatarUrl:
+          "https://i.pinimg.com/736x/3a/a8/c0/3aa8c05aeec9108cfb0ea66bdd4a3804.jpg",
       },
       {
         name: "NMIXX",
         category: "Girl Group",
         agencyId: jyp._id,
-        avatarUrl: avatar("NMIXX"),
+        avatarUrl:
+          "https://preview.redd.it/nmixx-the-2nd-single-entwurf-concept-photo-2-group-v0-uuzrqnx6lum91.jpg?auto=webp&s=6ef854324ae64ffe8760693446b17337c1550ef1",
       },
       {
         name: "ITZY",
         category: "Girl Group",
         agencyId: jyp._id,
-        avatarUrl: avatar("ITZY"),
+        avatarUrl:
+          "https://i.pinimg.com/736x/d4/a8/fd/d4a8fdf54e7bf28f04f27aa8c2ab97eb.jpg",
       },
 
       // YG Entertainment
@@ -130,19 +135,22 @@ const seed = async () => {
         name: "BLACKPINK",
         category: "Girl Group",
         agencyId: yg._id,
-        avatarUrl: avatar("BLACKPINK"),
+        avatarUrl:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGWAJdEpVUZ_Z-uUHtSShLe0475egOmZtV4HAjEWl_lnPyAutDtp2LBNFK&s=10",
       },
       {
         name: "BIGBANG",
         category: "Boy Group",
         agencyId: yg._id,
-        avatarUrl: avatar("BIGBANG"),
+        avatarUrl:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzx6qTK7akYaxXWJGlOkkS4LZiSsM0NLdUyO-tBlFnOCiORIkej3iq9177&s=10",
       },
       {
         name: "Baby Monster",
         category: "Girl Group",
         agencyId: yg._id,
-        avatarUrl: avatar("Baby Monster"),
+        avatarUrl:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWivOj0y85uf2k_TssEJUI6EA29uD4c8tHu-iAiVWVzVvKNdfr6pSxORgt&s=10",
       },
 
       // HYBE
@@ -150,13 +158,15 @@ const seed = async () => {
         name: "BTS",
         category: "Boy Group",
         agencyId: hybe._id,
-        avatarUrl: avatar("BTS"),
+        avatarUrl:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDU5NlRAS9Efn-eRizqjxqzpXW7TNKzNgoDM9DtkeDjwISdLIg9HSBBOx0&s=10",
       },
       {
         name: "NewJeans",
         category: "Girl Group",
         agencyId: hybe._id,
-        avatarUrl: avatar("NewJeans"),
+        avatarUrl:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXljJT3YnequXHAha7INRREBwA4q0g1YjJYGvEDFUodg&s",
       },
 
       // Starship Entertainment
@@ -164,13 +174,15 @@ const seed = async () => {
         name: "IVE",
         category: "Girl Group",
         agencyId: starship._id,
-        avatarUrl: avatar("IVE"),
+        avatarUrl:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnXemGFuBafmcUyg_oUKX37nN7ZLVeVp7sktkTdxxLH0nx7boGppiJ6E8&s=10",
       },
       {
         name: "SISTAR",
         category: "Girl Group",
         agencyId: starship._id,
-        avatarUrl: avatar("SISTAR"),
+        avatarUrl:
+          "https://i.pinimg.com/236x/48/36/40/48364081fe4161be6c75faedbb6f0f75.jpg",
       },
 
       // CUBE Entertainment
@@ -178,7 +190,8 @@ const seed = async () => {
         name: "i-dle",
         category: "Girl Group",
         agencyId: cube._id,
-        avatarUrl: avatar("i-dle"),
+        avatarUrl:
+          "https://i.pinimg.com/736x/41/42/b3/4142b32bb53f2b6a1e35166fa26eb056.jpg",
       },
 
       // S2 Entertainment
@@ -186,14 +199,15 @@ const seed = async () => {
         name: "KISS OF LIFE",
         category: "Girl Group",
         agencyId: s2._id,
-        avatarUrl: avatar("KISS OF LIFE"),
+        avatarUrl:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfEQqlZHJPToKjvoWDTgFlqW8vX4lDWWmnwGnS3jrdiaUFYvojfGeqtBQg&s=10",
       },
     ];
 
     const idols = await Idol.insertMany(idolsData);
     console.log(`Created ${idols.length} idols`);
 
-    // 取常用 idol（按名字查找）
+    // 取常用 idol
     const iu = idols.find((i) => i.name === "IU");
     const aespa = idols.find((i) => i.name === "aespa");
     const bts = idols.find((i) => i.name === "BTS");
@@ -204,7 +218,6 @@ const seed = async () => {
     // ================================
     // 3. USERS
     // ================================
-    // 注意：User 有 pre-save hook 哈希密码，必须用 create（不能用 insertMany）
     const admin = await User.create({
       username: "admin",
       email: "admin@test.com",
@@ -322,7 +335,6 @@ const seed = async () => {
       amount: -bobVotes,
     });
 
-    // 更新 poll 里对应 candidate 的 voteCount
     activePoll.candidates.find(
       (c) => c.idolId.toString() === iu._id.toString(),
     ).voteCount = xanderVotes;
@@ -331,7 +343,6 @@ const seed = async () => {
     ).voteCount = bobVotes;
     await activePoll.save();
 
-    // 更新 idol 的 totalVotes
     await Idol.findByIdAndUpdate(iu._id, { $inc: { totalVotes: xanderVotes } });
     await Idol.findByIdAndUpdate(bts._id, { $inc: { totalVotes: bobVotes } });
 
