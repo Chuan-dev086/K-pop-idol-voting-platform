@@ -271,7 +271,15 @@ exports.updatePoll = async (req, res) => {
           .status(400)
           .json({ message: "One or more idols do not exist" });
       }
-      poll.candidates = candidates.map((c) => ({ idolId: c.idolId }));
+      poll.candidates = candidates.map((c) => {
+        const existing = poll.candidates.find(
+          (old) => old.idolId.toString() === c.idolId.toString(),
+        );
+        return {
+          idolId: c.idolId,
+          voteCount: existing ? existing.voteCount : 0,
+        };
+      });
     }
 
     // renew the poll in database

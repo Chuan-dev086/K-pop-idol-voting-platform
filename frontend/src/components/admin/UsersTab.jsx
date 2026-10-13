@@ -139,11 +139,18 @@ const UsersTab = () => {
 
     try {
       // Send the updated user information to the backend
-      await api.put(`/users/${editingId}`, {
+      const payload = {
         username: form.username,
         email: form.email,
-        role: form.role,
-      });
+        heartBalance: parseInt(form.heartBalance, 10),
+      };
+
+      // cannot edit itself
+      if (!isEditingSelf) {
+        payload.role = form.role;
+      }
+
+      await api.put(`/users/${editingId}`, payload);
 
       enqueueSnackbar("User updated successfully", {
         variant: "success",
@@ -272,7 +279,7 @@ const UsersTab = () => {
   }
 
   // Check whether the currently edited user is the logged-in user
-  const isEditingSelf = editingId === currentUser?._id;
+  const isEditingSelf = editingId === currentUser?.id;
 
   return (
     <Box>

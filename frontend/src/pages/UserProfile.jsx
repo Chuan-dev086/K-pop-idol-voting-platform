@@ -13,6 +13,13 @@ import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import dayjs from "dayjs";
 
+const typeLabels = {
+  CHECK_IN: "Daily Check-in",
+  VOTE_SPENT: "Vote Spent",
+  ADMIN_GRANT: "Admin Grant",
+  TASK_REWARD: "Task Reward",
+};
+
 const UserProfile = () => {
   const { user, setUser } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
@@ -276,7 +283,7 @@ const UserProfile = () => {
                       >
                         <Box>
                           <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {log.type}
+                            {typeLabels[log.type] || log.type}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
                             {dayjs(log.createdAt).format("MMM D, YYYY HH:mm")}

@@ -296,9 +296,11 @@ const PollDetail = () => {
                   </Typography>
                 </Box>
 
-                <Typography sx={{ mb: 1, fontStyle: "italic" }}>
-                  "{msg.message}"
-                </Typography>
+                {msg.message && msg.message.trim() && (
+                  <Typography sx={{ mb: 1, fontStyle: "italic" }}>
+                    "{msg.message}"
+                  </Typography>
+                )}
 
                 <Typography variant="caption" color="text.secondary">
                   {msg.votesSpent} votes · {dayjs(msg.createdAt).fromNow()}

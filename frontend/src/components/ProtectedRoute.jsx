@@ -4,17 +4,17 @@ import { useAuth } from "../context/AuthContext";
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
   const { user } = useAuth();
 
-  // 未登录 → 去登录页
+  // if don't login redirect to login page
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  // 需要 admin 但不是 admin → 回首页
+  // if need admin but the user role is not admin will redirect to home page
   if (requireAdmin && user.role !== "admin") {
     return <Navigate to="/" replace />;
   }
 
-  // 通过 → 渲染子组件
+  // if everything is OK then render the children component which is admin dashboard
   return children;
 };
 

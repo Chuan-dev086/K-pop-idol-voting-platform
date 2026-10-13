@@ -23,6 +23,7 @@ const voteTransactionSchema = new mongoose.Schema({
   },
   message: {
     type: String,
+    default: "",
   },
   createdAt: {
     type: Date,

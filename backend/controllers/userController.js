@@ -73,7 +73,7 @@ exports.updateUser = async (req, res) => {
 
     // check the user role and user cannot change own role
     const isSelf = req.user._id.toString() === id;
-    if (isSelf && role !== undefined) {
+    if (isSelf && role !== undefined && role !== user.role) {
       return res
         .status(400)
         .json({ message: "You cannot change your own role" });

@@ -173,7 +173,7 @@ exports.getPollMessages = async (req, res) => {
 
     const messages = await VoteTransaction.find({
       pollId,
-      message: { $ne: "" },
+      message: { $exists: true, $ne: "" },
     })
       .populate("userId", "username")
       .populate("idolId", "name avatarUrl")
