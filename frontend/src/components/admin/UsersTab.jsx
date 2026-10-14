@@ -142,7 +142,6 @@ const UsersTab = () => {
       const payload = {
         username: form.username,
         email: form.email,
-        heartBalance: parseInt(form.heartBalance, 10),
       };
 
       // cannot edit itself
@@ -423,6 +422,10 @@ const UsersTab = () => {
                 username: e.target.value,
               })
             }
+            disabled={!isEditingSelf}
+            helperText={
+              !isEditingSelf ? "You can only change your own username" : ""
+            }
             sx={{ mt: 1, mb: 2 }}
           />
 
@@ -438,6 +441,10 @@ const UsersTab = () => {
                 ...form,
                 email: e.target.value,
               })
+            }
+            disabled={!isEditingSelf}
+            helperText={
+              !isEditingSelf ? "You can only change your own email" : ""
             }
             sx={{ mb: 2 }}
           />

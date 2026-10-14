@@ -79,6 +79,20 @@ exports.updateUser = async (req, res) => {
         .json({ message: "You cannot change your own role" });
     }
 
+    // ← 加这段：编辑别人不能改 username / email
+    if (!isSelf) {
+      if (username !== undefined && username !== user.username) {
+        return res
+          .status(403)
+          .json({ message: "You can only change your own username" });
+      }
+      if (email !== undefined && email !== user.email) {
+        return res
+          .status(403)
+          .json({ message: "You can only change your own email" });
+      }
+    }
+
     // if got new username and the new username is not equal to current username
     // find the user with this username and not inculde user itself($ne means not equal )
     if (username && username !== user.username) {

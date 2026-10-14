@@ -23,7 +23,7 @@ const typeLabels = {
 
 const UserProfile = () => {
   // Get the current user and the function used to update user state.
-  const { user, setUser } = useAuth();
+  const { user, setUser, refreshUser } = useAuth();
 
   // Snackbar helper used to show success and error notifications.
   const { enqueueSnackbar } = useSnackbar();
@@ -47,25 +47,25 @@ const UserProfile = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Fetch the user's voting history and heart history after login.
   useEffect(() => {
     if (!user) return;
 
-    const fetchHistory = async () => {
+    const fetchData = async () => {
       try {
-        const res = await api.get("/votes/history");
+        await refreshUser();
 
+        const res = await api.get("/votes/history");
         setHistory({
           votes: res.data.votes,
           heartLogs: res.data.heartLogs,
         });
       } catch {
-        // Silently ignore history loading errors.
+        // 静默失败
       }
     };
 
-    fetchHistory();
-  }, [user]);
+    fetchData();
+  }, [user?.id]);
 
   // Handle the daily check-in request.
   const handleCheckIn = async () => {
@@ -87,7 +87,7 @@ const UserProfile = () => {
 
       // Show a success notification.
       enqueueSnackbar("Check-in successful! +50 hearts", {
-        variant: "error",
+        variant: "success",
       });
 
       // Refresh the voting and heart history after a successful check-in.
