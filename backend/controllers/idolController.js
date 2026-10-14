@@ -154,7 +154,7 @@ exports.updateIdol = async (req, res) => {
     }
 
     // if avatarUrl have changes then renew it
-    if (avatarUrl) {
+    if (avatarUrl !== undefined) {
       idol.avatarUrl = avatarUrl;
     }
 

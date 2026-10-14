@@ -149,7 +149,7 @@ const IdolsTab = () => {
 
     try {
       await api.delete(`/idols/${idol._id}`);
-      enqueueSnackbar("Idol deleted successfully", { variant: "success" });
+      enqueueSnackbar("Idol deleted successfully", { variant: "error" });
       fetchData();
     } catch (error) {
       const msg = error.response?.data?.message || "Delete failed";

@@ -114,6 +114,7 @@ const UserProfile = () => {
           const m = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
           const s = Math.floor((remainingMs % (1000 * 60)) / 1000);
 
+          // the padStart means the complete of time number 
           msg = `Already checked in. Try again in ${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
         }
       }

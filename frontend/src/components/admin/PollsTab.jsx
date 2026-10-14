@@ -287,7 +287,7 @@ const PollsTab = () => {
       await api.delete(`/polls/${poll._id}`);
 
       enqueueSnackbar("Poll deleted successfully", {
-        variant: "success",
+        variant: "error",
       });
 
       // Refresh the data after deletion

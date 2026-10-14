@@ -343,8 +343,32 @@ const seed = async () => {
     ).voteCount = bobVotes;
     await activePoll.save();
 
-    await Idol.findByIdAndUpdate(iu._id, { $inc: { totalVotes: xanderVotes } });
-    await Idol.findByIdAndUpdate(bts._id, { $inc: { totalVotes: bobVotes } });
+    // ================================
+    // 5.5 SYNC totalVotes
+    // ================================
+    // 遍历所有 idol，从所有 poll 的 candidates 里重新算 totalVotes
+    const allIdols = await Idol.find();
+    let syncedCount = 0;
+
+    for (const idol of allIdols) {
+      const polls = await Poll.find({ "candidates.idolId": idol._id });
+
+      let total = 0;
+      for (const poll of polls) {
+        const candidate = poll.candidates.find(
+          (c) => c.idolId.toString() === idol._id.toString(),
+        );
+        total += candidate?.voteCount || 0;
+      }
+
+      if (idol.totalVotes !== total) {
+        idol.totalVotes = total;
+        await idol.save();
+        syncedCount++;
+      }
+    }
+
+    console.log(`Synced totalVotes for ${syncedCount} idols`);
 
     console.log(
       `Created votes (xander -> IU: ${xanderVotes}, bob -> BTS: ${bobVotes})`,
