@@ -23,7 +23,7 @@ exports.getAllIdols = async (req, res) => {
     if (agencyId) {
       filter.agencyId = agencyId;
     }
-
+    
     // find the idols with the filter conditions and .populate the agency ID with complete agency ID message
     const idols = await Idol.find(filter).populate("agencyId");
 
